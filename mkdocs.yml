@@ -11,6 +11,7 @@ extra:
 extra_css:
 - https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css
 - https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css
+- stylesheets/extra.css
 extra_javascript:
 - https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js
 - https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js
