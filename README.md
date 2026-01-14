@@ -2,7 +2,7 @@
 
 ## 📚 New Day One Book as a Code
 
-HPE Juniper Networking is introducing a new version of the **Day One Books** solution relying on the Doc As A Code frameworks. It offers online technical books dedicated to networking. This book is available both online, in PDF format and ePub, providing in-depth insights into HPE/Juniper technologies and best practices. The book will be continuously updated to reflect the latest advancements, ensuring that readers always have access to the most current information.
+HPE Juniper Networking is introducing a new version of the **Day One Book** platform relying on the Doc As A Code frameworks. It offers online technical books dedicated to networking. This book is available both online, in PDF format and ePub, providing in-depth insights into HPE/Juniper technologies and best practices. The book will be continuously updated to reflect the latest advancements, ensuring that readers always have access to the most current information.
 
 ---
 
