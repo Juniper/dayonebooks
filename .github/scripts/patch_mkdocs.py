@@ -1,63 +1,127 @@
-#!/usr/bin/env python3
 import os
-import sys
 import yaml
 
-branch = os.environ.get("BRANCH")
-if not branch:
-    print("Error: BRANCH environment variable not set", file=sys.stderr)
-    sys.exit(1)
+BRANCH = os.environ.get("BRANCH", "main")
+REPO = os.environ.get("REPO_NAME", "book")
 
-mkdocs_file = "mkdocs.yml"
-with open(mkdocs_file) as f:
+MKDOCS_FILE = "mkdocs.yml"
+BOOK_DESC_FILE = "docs/book/book-desc.yml"
+INDEX_FILE = "docs/index.md"
+
+# -------------------------------
+# Load mkdocs.yml
+# -------------------------------
+with open(MKDOCS_FILE, "r") as f:
     config = yaml.safe_load(f)
 
-# Update site_name
-config["site_name"] = f"Day One Books - This is a work in progress site for the branch {branch}"
-
-# Update site_dir based on branch
-if branch == "main":
-    config["site_dir"] = "/var/www/html/main"
+# -------------------------------
+# 1. site_dir logic
+# -------------------------------
+if BRANCH != "main":
+    config["site_dir"] = BRANCH
 else:
-    config["site_dir"] = f"/var/www/html/{branch}"
+    config.pop("site_dir", None)
 
-def filter_nav(nav):
-    """
-    Recursively filter nav items: keep only those that contain the branch in their path,
-    and preserve parent items if they lead to branch files.
-    """
-    new_nav = []
-    for item in nav:
-        if isinstance(item, dict):
-            key, value = list(item.items())[0]
-            if isinstance(value, str):
-                if branch in value:
-                    new_nav.append({key: value})
-            elif isinstance(value, list):
-                filtered_children = filter_nav(value)
-                if filtered_children:
-                    # Rename "All Books" -> "Your Book"
-                    if key == "The Book":
-                        key = "Your Book"
-                    new_nav.append({key: filtered_children})
-        else:
-            if branch in str(item):
-                new_nav.append(item)
-    return new_nav
+# -------------------------------
+# 2. Build book menus
+# -------------------------------
+book_links = [
+    {"PDF Book": f"download/{REPO}.pdf"},
+    {"ePUB Book": f"download/{REPO}.epub"},
+]
 
-filtered_nav = filter_nav(config.get("nav", []))
+if BRANCH != "main":
+    book_links.append(
+        {"DOCX Book (for review only)": f"download/{REPO}.docx"}
+    )
 
-if not filtered_nav:
-    print(f"Error: No nav entries found for branch '{branch}'", file=sys.stderr)
-    sys.exit(1)
+# -------------------------------
+# 3. Insert menus before "About us"
+# -------------------------------
+nav = config.get("nav", [])
+new_nav = []
+inserted = False
 
-# Add "Your PDF" and "Your ePUB" if branch is not main
-if branch != "main":
-    filtered_nav.append({"Your PDF": f"download/{branch}.pdf"})
-    filtered_nav.append({"Your DOCX (for review)": f"download/{branch}.docx"})
-    filtered_nav.append({"Your ePUB": f"download/{branch}.epub"})
+for item in nav:
+    if isinstance(item, dict) and "About us" in item and not inserted:
+        for link in book_links:
+            new_nav.append(link)
+        inserted = True
+    new_nav.append(item)
 
-config["nav"] = filtered_nav
+if not inserted:
+    new_nav.extend(book_links)
 
-with open(mkdocs_file, "w") as f:
+config["nav"] = new_nav
+
+# -------------------------------
+# 4. Write back mkdocs.yml
+# -------------------------------
+with open(MKDOCS_FILE, "w") as f:
     yaml.dump(config, f, sort_keys=False)
+
+print(f"mkdocs.yml patched for branch: {BRANCH}")
+
+# -------------------------------
+# 5. Generate docs/index.md
+# -------------------------------
+# Load book description YAML
+book_title = book_subtitle = book_author = "Unknown"
+if os.path.exists(BOOK_DESC_FILE):
+    with open(BOOK_DESC_FILE, "r") as f:
+        book_meta = yaml.safe_load(f)
+        book_title = book_meta.get("title", book_title)
+        book_subtitle = book_meta.get("subtitle", book_subtitle)
+        book_author = book_meta.get("author", book_author)
+
+# Prepare WARNING message
+if BRANCH == "main":
+    warning_md = ""
+else:
+    warning_md = (
+        '<p align="center">'
+        '<i class="fa-solid fa-triangle-exclamation" style="color:red; font-size:1.2em;"></i> '
+        f'<strong>THIS IS A WORK-IN-PROGRESS BOOK - BRANCH {BRANCH}</strong>'
+        '</p>\n'
+    )
+
+# Markdown template
+index_md = f"""# DayOne Book by Juniper/HPE
+
+{warning_md}
+
+<p align="center">
+  <a href="https://juniper.net">
+    <img class="my-icon" src="images/jnpr_logo.png?sanitize=true" alt="logo"/>
+  </a>
+</p>
+<div style="text-align: center; margin-top: 2em;">
+  <a href="book/chapter1" class="custom-button">
+    <i class="fa-brands fa-readme" style="margin-right: 0.4em;"></i>
+    Ready to read?
+  </a>
+</div>
+
+## About the content
+
+This is the digital DayOne book repository:
+
+**{book_title} - {book_subtitle}**
+
+By {book_author}
+
+You will find the book in three versions: Web, PDF and ePUB
+
+## Legal disclaimer
+
+*Juniper Networks may disclose information related to development and plans for future products, features or enhancements, known as a Plan of Record (“POR”).  These details provided are based on Juniper’s current development efforts and plans. These development efforts and plans are subject to change at Juniper’s sole discretion, without notice.  Except as may be set forth in definitive agreements, Juniper Networks provides no assurances and assumes no responsibility to introduce products, features or enhancements described in this presentation.  Purchasing decisions by third-parties should not be based on this POR and no purchases are contingent upon Juniper Networks delivering any feature or functionality depicted in this presentation.*
+"""
+
+# Ensure docs directory exists
+os.makedirs("docs", exist_ok=True)
+
+# Write index.md
+with open(INDEX_FILE, "w") as f:
+    f.write(index_md)
+
+print(f"docs/index.md generated for branch: {BRANCH}")

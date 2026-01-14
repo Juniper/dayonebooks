@@ -61,19 +61,18 @@ jobs:
       # Build MkDocs
       # ----------------------------
       - name: Build MkDocs site
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |
+          set -e
           cd $GITHUB_WORKSPACE
+
           BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
           echo "Branch detected: $BRANCH"
 
-          if [ "$BRANCH" != "main" ]; then
-            echo "Patching mkdocs.yml"
-            BRANCH=$BRANCH python3 .github/scripts/patch_mkdocs.py
-
-            mkdir -p docs
-            echo "# WORK IN PROGRESS
-          This is the branch work page **$BRANCH** - click on Your-Book menu" > docs/index.md
-          fi
+          echo "Patching mkdocs.yml"
+          BRANCH="$BRANCH" REPO_NAME="$REPO_NAME" \
+            python3 .github/scripts/patch_mkdocs.py
 
           echo "==== mkdocs.yml content before build ===="
           cat mkdocs.yml
