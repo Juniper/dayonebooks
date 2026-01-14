@@ -69,10 +69,13 @@ print(f"mkdocs.yml patched for branch: {BRANCH}")
 book_title = book_subtitle = book_author = "Unknown"
 if os.path.exists(BOOK_DESC_FILE):
     with open(BOOK_DESC_FILE, "r") as f:
-        book_meta = yaml.safe_load(f)
-        book_title = book_meta.get("title", book_title)
-        book_subtitle = book_meta.get("subtitle", book_subtitle)
-        book_author = book_meta.get("author", book_author)
+        all_docs = list(yaml.safe_load_all(f))
+        if len(all_docs) > 0:
+            # Take first document (adjust if needed)
+            book_meta = all_docs[0]
+            book_title = book_meta.get("title", book_title)
+            book_subtitle = book_meta.get("subtitle", book_subtitle)
+            book_author = book_meta.get("author", book_author)
 
 # Prepare WARNING message
 if BRANCH == "main":
