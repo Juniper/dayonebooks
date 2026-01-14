@@ -88,7 +88,7 @@ if BRANCH == "main":
 else:
     warning_md = (
         '<p align="center">'
-        '<i class="fa-solid fa-triangle-exclamation" style="color:red; font-size:1.2em;"></i> '
+        '<img src="images" alt="Animated GIF" style="display: block; margin: 0 auto; width: 100px; height: auto;">'
         f'<strong>THIS IS A WORK-IN-PROGRESS BOOK - BRANCH {BRANCH}</strong>'
         '</p>\n'
     )
