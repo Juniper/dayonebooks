@@ -15,6 +15,21 @@ with open(MKDOCS_FILE, "r") as f:
     config = yaml.safe_load(f)
 
 # -------------------------------
+# 0. Switch extra.css for branches
+# -------------------------------
+extra = config.get("extra", {})
+extra_css = extra.get("extra_css", [])
+
+if BRANCH != "main":
+    extra_css = [
+        "stylesheets/extra-branch.css" if css == "stylesheets/extra.css" else css
+        for css in extra_css
+    ]
+
+extra["extra_css"] = extra_css
+config["extra"] = extra
+
+# -------------------------------
 # 1. site_dir logic
 # -------------------------------
 if BRANCH != "main":
@@ -89,7 +104,7 @@ else:
     )
 
 # Markdown template
-index_md = f"""# DayOne Book by Juniper/HPE
+index_md = f"""# {book_title} - Dayone Book
 {warning_md}
 <p align="center">
   <a href="https://juniper.net">
@@ -98,7 +113,7 @@ index_md = f"""# DayOne Book by Juniper/HPE
 </p>
 ## About the content
 
-This is the digital DayOne book repository of: **{book_title} - {book_subtitle}**
+This is the digital Dayone book repository of: **{book_title} - {book_subtitle}**
 
 By {book_author}
 

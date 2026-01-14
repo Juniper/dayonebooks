@@ -107,11 +107,11 @@
 
 [data-md-color-scheme="default"] .md-header,
 [data-md-color-scheme="default"] .md-header__inner {
-  background-color: #01a982 !important;
+  background-color: #fcbf23 !important;
 }
 
 [data-md-color-scheme="default"] .md-tabs {
-  background-color: #01a982 !important;
+  background-color: #fcbf23 !important;
 }
 
 [data-md-color-scheme="default"] .md-tabs__item--active > .md-tabs__link {
@@ -123,7 +123,7 @@
 }
 
 [data-md-color-scheme="default"] .md-footer {
-  background-color: #01a982 !important;
+  background-color: #fcbf23 !important;
   color: white !important;
 }
 
@@ -135,7 +135,7 @@
 [data-md-color-scheme="slate"] .md-header,
 [data-md-color-scheme="slate"] .md-header__inner,
 [data-md-color-scheme="slate"] .md-tabs {
-  background-color: #008567 !important;
+  background-color: #fcbf23 !important;
 }
 
 [data-md-color-scheme="slate"] .md-tabs__item--active > .md-tabs__link {
@@ -143,6 +143,6 @@
 }
 
 [data-md-color-scheme="slate"] .md-footer {
-  background-color: #008567 !important;
+  background-color: #fcbf23 !important;
   color: white !important;
 }
