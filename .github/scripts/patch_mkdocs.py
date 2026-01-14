@@ -87,14 +87,14 @@ if BRANCH == "main":
     banner = (
         '<p align="center">'
         '<a href="https://juniper.net">'
-            '<img class="my-icon" src="images/jnpr_logo.png?sanitize=true" alt="logo"/>'
+            '<img class="my-icon" src="images/logo.png?sanitize=true" alt="logo"/>'
         '</a>'
         '</p>'
     )
 else:
     banner = (
         '<p align="center">'
-        '<img src="images/warn.gif" alt="Animated GIF" style="display: block; margin: 0 auto; width: 100px; height: auto;"></br>'
+        '<img src="images/warn.gif" alt="Animated GIF" style="display: block; margin: 0 auto; width: 100px; height: auto;"><br>'
         f'<strong>THIS IS A WORK-IN-PROGRESS BOOK - BRANCH {BRANCH}</strong>'
         '</p>'
     )
