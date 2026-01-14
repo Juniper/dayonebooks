@@ -99,8 +99,8 @@ index_md = f"""# DayOne Book by Juniper/HPE
   </a>
 </p>
 <div style="text-align: center; margin-top: 2em;">
-  <a href="book/chapter1" class="custom-button">
-    <i class="fa-brands fa-readme" style="margin-right: 0.4em;"></i>
+  <a href="book/chapter1" class="custom-button" style="font-size:1rem; display:inline-flex; align-items:center;">
+    <i class="fa-brands fa-readme" style="margin-right:0.4em; font-size:1.2em;"></i>
     Ready to read?
   </a>
 </div>
