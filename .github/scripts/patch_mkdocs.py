@@ -90,18 +90,18 @@ else:
 
 # Markdown template
 index_md = f"""# DayOne Book by Juniper/HPE
-
 {warning_md}
-
 <p align="center">
   <a href="https://juniper.net">
     <img class="my-icon" src="images/jnpr_logo.png?sanitize=true" alt="logo"/>
   </a>
 </p>
 <div style="text-align: center; margin-top: 2em;">
-  <a href="book/chapter1" class="custom-button" style="font-size:1rem; display:inline-flex; align-items:center;">
-    <i class="fa-brands fa-readme" style="margin-right:0.4em; font-size:1.2em;"></i>
-    Ready to read?
+  <a href="book/chapter1" 
+     class="custom-button" 
+     style="display: inline-flex; align-items: center; gap: 0.4em; font-size: 1rem; padding: 0.5em 1em; background-color: #007ACC; color: white; border-radius: 0.3em; text-decoration: none;">
+    <i class="fa-solid fa-book" style="font-size: 1em;"></i>
+    Read now!
   </a>
 </div>
 
