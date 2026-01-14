@@ -107,24 +107,24 @@
 
 [data-md-color-scheme="default"] .md-header,
 [data-md-color-scheme="default"] .md-header__inner {
-  background-color: #fcbf23 !important;
+  background-color: #FFA500 !important;
 }
 
 [data-md-color-scheme="default"] .md-tabs {
-  background-color: #fcbf23 !important;
+  background-color: #FFA500 !important;
 }
 
 [data-md-color-scheme="default"] .md-tabs__item--active > .md-tabs__link {
-  color: white !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 [data-md-color-scheme="default"] .md-tabs__link:hover {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 [data-md-color-scheme="default"] .md-footer {
-  background-color: #fcbf23 !important;
-  color: white !important;
+  background-color: #FFA500 !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 
@@ -135,14 +135,14 @@
 [data-md-color-scheme="slate"] .md-header,
 [data-md-color-scheme="slate"] .md-header__inner,
 [data-md-color-scheme="slate"] .md-tabs {
-  background-color: #fcbf23 !important;
+  background-color: #FFA500 !important;
 }
 
 [data-md-color-scheme="slate"] .md-tabs__item--active > .md-tabs__link {
-  color: white !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 [data-md-color-scheme="slate"] .md-footer {
-  background-color: #fcbf23 !important;
-  color: white !important;
+  background-color: #FFA500 !important;
+  color: rgb(0, 0, 0) !important;
 }
