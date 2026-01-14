@@ -84,23 +84,28 @@ if os.path.exists(BOOK_DESC_FILE):
 
 # Prepare WARNING message
 if BRANCH == "main":
-    warning_md = ""
-else:
-    warning_md = (
+    banner = (
         '<p align="center">'
-        '<img src="images" alt="Animated GIF" style="display: block; margin: 0 auto; width: 100px; height: auto;">'
+        '<a href="https://juniper.net">'
+            '<img class="my-icon" src="images/jnpr_logo.png?sanitize=true" alt="logo"/>'
+        '</a>'
+        '</p>'
+    )
+else:
+    banner = (
+        '<p align="center">'
+        '<img src="images/warn.gif" alt="Animated GIF" style="display: block; margin: 0 auto; width: 100px; height: auto;">'
         f'<strong>THIS IS A WORK-IN-PROGRESS BOOK - BRANCH {BRANCH}</strong>'
-        '</p>\n'
+        '\n'
+        '<a href="https://juniper.net">'
+            '<img class="my-icon" src="images/jnpr_logo.png?sanitize=true" alt="logo"/>'
+        '</a>'
+        '</p>'
     )
 
 # Markdown template
 index_md = f"""# {book_title} - Dayone Book
-{warning_md}
-<p align="center">
-  <a href="https://juniper.net">
-    <img class="my-icon" src="images/jnpr_logo.png?sanitize=true" alt="logo"/>
-  </a>
-</p>
+{banner}
 ## About the content
 
 This is the digital Dayone book repository of: **{book_title} - {book_subtitle}**
