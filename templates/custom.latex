@@ -831,6 +831,8 @@ $endif$
   backgroundcolor  = \color{listing-background},
   basicstyle = \color{listing-text-color}\linespread{1.0}\fontsize{8}{9}\selectfont\ttfamily,
   breaklines       = true,
+  breakatwhitespace=false,
+  columns=fullflexible,
   frame            = single,
   framesep         = 0.19em,
   rulecolor        = \color{listing-rule},

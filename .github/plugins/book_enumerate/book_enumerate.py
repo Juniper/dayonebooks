@@ -16,7 +16,7 @@ class BookEnumeratePlugin(BasePlugin):
     def on_nav(self, nav, config, files):
         for page in nav.pages:
             src = page.file.src_path
-            if src.startswith("books/") and "/menu/" not in src:
+            if src.startswith("book/") and "/menu/" not in src:
                 book = src.split("/")[1]
                 self.page_order_per_book.setdefault(book, []).append(src)
         return nav
@@ -33,7 +33,7 @@ class BookEnumeratePlugin(BasePlugin):
     def on_page_markdown(self, markdown, page, config, files):
         src = page.file.src_path
 
-        if not src.startswith("books/") or "/menu/" in src:
+        if not src.startswith("book/") or "/menu/" in src:
             return markdown
 
         book = src.split("/")[1]

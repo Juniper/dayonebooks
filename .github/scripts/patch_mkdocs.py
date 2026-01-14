@@ -37,7 +37,7 @@ def filter_nav(nav):
                 filtered_children = filter_nav(value)
                 if filtered_children:
                     # Rename "All Books" -> "Your Book"
-                    if key == "All Books":
+                    if key == "The Book":
                         key = "Your Book"
                     new_nav.append({key: filtered_children})
         else:
@@ -50,6 +50,12 @@ filtered_nav = filter_nav(config.get("nav", []))
 if not filtered_nav:
     print(f"Error: No nav entries found for branch '{branch}'", file=sys.stderr)
     sys.exit(1)
+
+# Add "Your PDF" and "Your ePUB" if branch is not main
+if branch != "main":
+    filtered_nav.append({"Your PDF": f"download/{branch}.pdf"})
+    filtered_nav.append({"Your DOCX (for review)": f"download/{branch}.docx"})
+    filtered_nav.append({"Your ePUB": f"download/{branch}.epub"})
 
 config["nav"] = filtered_nav
 

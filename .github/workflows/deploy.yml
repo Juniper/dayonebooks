@@ -19,7 +19,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Pandoc
-        if: github.ref_name == 'main'
         run: |
           wget https://github.com/jgm/pandoc/releases/download/3.5/pandoc-3.5-1-amd64.deb
           sudo dpkg -i pandoc-3.5-1-amd64.deb
@@ -28,7 +27,6 @@ jobs:
                                   texlive-fonts-recommended texlive-fonts-extra
 
       - name: Copy Pandoc templates
-        if: github.ref_name == 'main'
         run: |
           sudo mkdir -p /usr/share/pandoc/data/templates
           sudo cp templates/custom.latex /usr/share/pandoc/data/templates/custom.latex
@@ -51,7 +49,6 @@ jobs:
           pip install . 
 
       - name: Install PDF utilities
-        if: github.ref_name == 'main'
         run: |
           sudo apt-get install -y poppler-utils
           
@@ -78,93 +75,104 @@ jobs:
           echo "Building site"
           mkdocs build
 
-      - name: Convertion PDF/ePUB
-        if: github.ref_name == 'main'
+      - name: Conversion PDF / ePUB
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |
-          cd $GITHUB_WORKSPACE
-          PDF_DIR=site/download
-          OUTPUT_FILE="$PDF_DIR/pdf-list.json"
-          mkdir -p "$PDF_DIR"
+          set -e
 
-          cd docs/books || exit 1
-          book_dirs=$(find . -mindepth 1 -maxdepth 1 -type d ! -name '.*')
-          if [ -z "$book_dirs" ]; then
-              echo "No actual book directories found in docs/books. Skipping PDF build."
+          cd "$GITHUB_WORKSPACE"
+
+          BOOK_DIR="docs/book"
+          CONTENTS="site/download"
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+
+          mkdir -p "$CONTENTS"
+
+          if [ ! -d "$BOOK_DIR" ]; then
+              echo "Book directory $BOOK_DIR not found. Skipping PDF build."
               exit 0
           fi
 
-          pdf_files=()
+          cd "$BOOK_DIR"
+          echo "Processing book
 
-          for book in */; do
-              if [ "${book%/}" = "menu" ]; then
-                  echo "Skipping $book"
-                  continue
-              fi
+          md_files=""
+          if ls chapter*.md 1>/dev/null 2>&1; then
+              for chapter in $(ls chapter*.md | sort -V); do
+                  md_files="$md_files $chapter"
+              done
+          fi
 
-              echo "Processing $book"
-              cd "$book" || continue
-
-              md_files="main.md"
-              if ls chapter*.md 1>/dev/null 2>&1; then
-                  for chapter in $(ls chapter*.md | sort -V); do
-                      md_files="$md_files $chapter"
-                  done
-              fi
-
-              if [ -n "$md_files" ]; then
-                  cat /dev/null > combined.md
-                  for file in $md_files; do
-                      sed '/^---$/,/^---$/d' "$file" >> combined.md
-                      echo "" >> combined.md
-                      echo "\pagebreak" >> combined.md
-                  done
-
-                  echo "Cleaning up markdown references"
-                  python3 ../../../.github/scripts/clean_md_links.py combined.md
-                  sed -i -e 's/<a\s*[^>]*id="\([^"]*\)"[^>]*>/\\label{\1}/g' -e 's/\xC2\xA0/ /g' combined.md
-
-                  pandoc -s --number-sections --listings --template "/usr/share/pandoc/data/templates/custom.latex" \
-                        --metadata-file header.yml --output="${book%/}.pdf" combined.md
-
-                  if [ -f "${book%/}.pdf" ]; then
-                      echo "PDF generated successfully for $book"
-                      cp "${book%/}.pdf" ../../../"$PDF_DIR/"
-                      pdf_files+=("\"${book%/}.pdf\"")
-
-                      # Generate PNG icons for the PDF
-                      echo "Generating icon for ${book%/}.pdf"
-                      output_png=../../../"$PDF_DIR/${book%/}"
-                      pdftoppm -png -f 1 -l 1 -singlefile "${book%/}.pdf" "$output_png"
-
-                      if [ -f "$output_png.png" ]; then
-                          echo "Cleaning up markdown for EPUB"
-                          python3 ../../../.github/scripts/clean_for_epub.py combined.md combined-epub.md
-                          echo "Generating mumbering for sections, figures and tables for EPUB"
-                          python3 ../../../.github/scripts/epub_numbering.py combined-epub.md
-                          echo "Generating EPUB for ${book%/}.epub"
-                          pandoc -s --metadata-file=header-epub.yml --epub-cover-image="$output_png.png" --output="${book%/}.epub" combined-epub.md
-                          if [ -f "${book%/}.epub" ]; then
-                              echo "EPUB generated successfully for $book"
-                              cp "${book%/}.epub" ../../../"$PDF_DIR/"
-                          else
-                              echo "Failed to generate EPUB for $book. See pandoc.log for details."
-                          fi
-                      else
-                          echo "Failed to generate icon for ${book%/}.pdf and therefore epub version"
-                      fi
-                  else
-                      echo "PDF generation failed for $book. See pandoc.log for details."
-                  fi
-              else
-                  echo "No markdown files found for $book. Skipping PDF generation."
-              fi
+          echo "Combining markdown files: $md_files"
+          cat /dev/null > combined.md
+          for file in $md_files; do
+              sed '/^---$/,/^---$/d' "$file" >> combined.md
+              echo "" >> combined.md
+              echo "\pagebreak" >> combined.md
           done
-          cd $GITHUB_WORKSPACE
 
-          # Write JSON list of PDFs
-          pdf_files_json=$(IFS=, ; echo "[${pdf_files[*]}]")
-          echo "$pdf_files_json" > "$OUTPUT_FILE"
-          echo "Generated $OUTPUT_FILE with ${#pdf_files[@]} PDFs and icons."
+          echo "Cleaning markdown references"
+          python3 ../../.github/scripts/clean_md_links.py combined.md
+          sed -i \
+            -e 's/<a\s*[^>]*id="\([^"]*\)"[^>]*>/\\label{\1}/g' \
+            -e 's/\xC2\xA0/ /g' combined.md
+
+          echo "sanitize md files to remove hidden unicode characters"
+          python3 ../../.github/scripts/sanitize_md.py combined.md
+
+          if [ "$BRANCH" != "main" ]; then
+            echo "Launch DOCX conversion for review"
+
+            pandoc -s --number-sections --listings \
+              --metadata-file header.yml \
+              --output="${REPO_NAME}.docx" combined.md
+
+            if [ -f "${REPO_NAME}.docx" ]; then
+                echo "DOCX generated successfully for ${REPO_NAME}"
+                cp "${REPO_NAME}.docx" "$CONTENTS"
+            else
+                echo "Failed to generate DOCX for ${REPO_NAME}."
+            fi
+          fi
+
+          echo "Generating PDF"
+          pandoc -s --number-sections --listings \
+            --template "/usr/share/pandoc/data/templates/custom.latex" \
+            --metadata-file header.yml \
+            --output="${REPO_NAME}.pdf" combined.md
+
+          if [ ! -f "${REPO_NAME}.pdf" ]; then
+              echo "PDF generation failed."
+              exit 1
+          fi
+
+          cp "${REPO_NAME}.pdf" "../../$CONTENTS/"
+
+          echo "Generating PDF icon"
+          pdftoppm -png -f 1 -l 1 -singlefile "${REPO_NAME}.pdf" "../../$CONTENTS/${REPO_NAME}"
+
+          ICON_PNG="../../$CONTENTS/${REPO_NAME}.png"
+
+          if [ -f "$ICON_PNG" ]; then
+              echo "Preparing EPUB markdown"
+              python3 ../../.github/scripts/clean_for_epub.py combined.md combined-epub.md
+              python3 ../../.github/scripts/epub_numbering.py combined-epub.md
+
+              echo "Generating EPUB"
+              pandoc -s \
+                --metadata-file=header-epub.yml \
+                --epub-cover-image="$ICON_PNG" \
+                --output="${REPO_NAME}.epub" combined-epub.md
+
+              if [ -f "${REPO_NAME}.epub" ]; then
+                  cp "${REPO_NAME}.epub" "../../$CONTENTS/"
+              else
+                  echo "EPUB generation failed."
+              fi
+          else
+              echo "Icon generation failed, skipping EPUB."
+          fi
 
       - name: List site output
         run: ls -R ./site
