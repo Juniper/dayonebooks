@@ -1,8 +1,0 @@
----
-rights: "© 2025 Juniper/HPE Networking"
-css: "../../rendering/custom_epub.css"
-
-header-includes:
-  - \usepackage{etoolbox}
-  - \preto{\section}{\clearpage}
----
