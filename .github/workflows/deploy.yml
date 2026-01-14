@@ -2,13 +2,12 @@ name: Build and Deploy MkDocs Site + PDFs
 
 on:
   push:
-    branches: 
-      - main
+    branches:
       - '**'
   workflow_dispatch:
 
 permissions:
-  contents: write 
+  contents: write
 
 jobs:
   build-deploy:
@@ -18,6 +17,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ----------------------------
+      # Install Pandoc 
+      # ----------------------------
       - name: Install Pandoc
         run: |
           wget https://github.com/jgm/pandoc/releases/download/3.5/pandoc-3.5-1-amd64.deb
@@ -32,12 +34,15 @@ jobs:
           sudo cp templates/custom.latex /usr/share/pandoc/data/templates/custom.latex
           sudo cp templates/listings-setup.tex /usr/share/pandoc/data/templates/listings-setup.tex
 
+      # ----------------------------
+      # Python / MkDocs
+      # ----------------------------
       - name: Install Python and MkDocs dependencies
         run: |
           sudo apt-get install -y python3-pip
           python3 -m pip config set global.break-system-packages true
           pip install mkdocs==1.4.2
-          pip install mkdocs-material==9.6.9 
+          pip install mkdocs-material==9.6.9
           pip install mkdocs-material[extras]
           pip install pymdown-extensions==10.16.1
           pip install markdown-katex==202406.1035
@@ -46,12 +51,15 @@ jobs:
           pip install pyyaml==6.0.1
           pip install bs4==0.0.2
           cd $GITHUB_WORKSPACE
-          pip install . 
+          pip install .
 
       - name: Install PDF utilities
         run: |
           sudo apt-get install -y poppler-utils
-          
+
+      # ----------------------------
+      # Build MkDocs
+      # ----------------------------
       - name: Build MkDocs site
         run: |
           cd $GITHUB_WORKSPACE
@@ -59,28 +67,28 @@ jobs:
           echo "Branch detected: $BRANCH"
 
           if [ "$BRANCH" != "main" ]; then
-
             echo "Patching mkdocs.yml"
             BRANCH=$BRANCH python3 .github/scripts/patch_mkdocs.py
 
             mkdir -p docs
             echo "# WORK IN PROGRESS
-            This is the branch work page **$BRANCH** - click on Your-Book menu" > docs/index.md
+          This is the branch work page **$BRANCH** - click on Your-Book menu" > docs/index.md
           fi
 
           echo "==== mkdocs.yml content before build ===="
           cat mkdocs.yml
           echo "========================================="
 
-          echo "Building site"
           mkdocs build
 
+      # ----------------------------
+      # PDF / DOCX / EPUB
+      # ----------------------------
       - name: Conversion PDF / ePUB
         env:
           REPO_NAME: ${{ github.event.repository.name }}
         run: |
           set -e
-
           cd "$GITHUB_WORKSPACE"
 
           BOOK_DIR="docs/book"
@@ -95,7 +103,7 @@ jobs:
           fi
 
           cd "$BOOK_DIR"
-          echo "Processing book
+          echo "Processing book"
 
           md_files=""
           if ls chapter*.md 1>/dev/null 2>&1; then
@@ -105,7 +113,8 @@ jobs:
           fi
 
           echo "Combining markdown files: $md_files"
-          cat /dev/null > combined.md
+          > combined.md
+
           for file in $md_files; do
               sed '/^---$/,/^---$/d' "$file" >> combined.md
               echo "" >> combined.md
@@ -118,22 +127,15 @@ jobs:
             -e 's/<a\s*[^>]*id="\([^"]*\)"[^>]*>/\\label{\1}/g' \
             -e 's/\xC2\xA0/ /g' combined.md
 
-          echo "sanitize md files to remove hidden unicode characters"
+          echo "Sanitizing markdown"
           python3 ../../.github/scripts/sanitize_md.py combined.md
 
           if [ "$BRANCH" != "main" ]; then
-            echo "Launch DOCX conversion for review"
-
+            echo "Generating DOCX"
             pandoc -s --number-sections --listings \
               --metadata-file header.yml \
               --output="${REPO_NAME}.docx" combined.md
-
-            if [ -f "${REPO_NAME}.docx" ]; then
-                echo "DOCX generated successfully for ${REPO_NAME}"
-                cp "${REPO_NAME}.docx" "$CONTENTS"
-            else
-                echo "Failed to generate DOCX for ${REPO_NAME}."
-            fi
+            cp "${REPO_NAME}.docx" "../../$CONTENTS" || true
           fi
 
           echo "Generating PDF"
@@ -142,12 +144,7 @@ jobs:
             --metadata-file header.yml \
             --output="${REPO_NAME}.pdf" combined.md
 
-          if [ ! -f "${REPO_NAME}.pdf" ]; then
-              echo "PDF generation failed."
-              exit 1
-          fi
-
-          cp "${REPO_NAME}.pdf" "../../$CONTENTS/"
+          cp "${REPO_NAME}.pdf" "../../$CONTENTS"
 
           echo "Generating PDF icon"
           pdftoppm -png -f 1 -l 1 -singlefile "${REPO_NAME}.pdf" "../../$CONTENTS/${REPO_NAME}"
@@ -155,7 +152,6 @@ jobs:
           ICON_PNG="../../$CONTENTS/${REPO_NAME}.png"
 
           if [ -f "$ICON_PNG" ]; then
-              echo "Preparing EPUB markdown"
               python3 ../../.github/scripts/clean_for_epub.py combined.md combined-epub.md
               python3 ../../.github/scripts/epub_numbering.py combined-epub.md
 
@@ -165,17 +161,8 @@ jobs:
                 --epub-cover-image="$ICON_PNG" \
                 --output="${REPO_NAME}.epub" combined-epub.md
 
-              if [ -f "${REPO_NAME}.epub" ]; then
-                  cp "${REPO_NAME}.epub" "../../$CONTENTS/"
-              else
-                  echo "EPUB generation failed."
-              fi
-          else
-              echo "Icon generation failed, skipping EPUB."
+              cp "${REPO_NAME}.epub" "../../$CONTENTS" || true
           fi
-
-      - name: List site output
-        run: ls -R ./site
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
@@ -186,40 +173,45 @@ jobs:
           keep_files: true
           destination_dir: ${{ github.ref_name != 'main' && github.ref_name || '' }}
 
-      - name: Clean up old branch previews
-        if: github.ref == 'refs/heads/main'
+  # ==========================================================
+  # CLEANUP JOB 
+  # ==========================================================
+  cleanup-previews:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Remove obsolete branch previews
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          cd gh-pages
 
-          PAGES_ROOT=./site  # root of gh-pages content
-          # Directories to never remove (main site folders)
           WHITELIST="addon assets books download images search stylesheets"
-
-          echo "Fetching list of active branches..."
           ACTIVE_BRANCHES=$(gh api repos/${GITHUB_REPOSITORY}/branches --jq '.[].name')
 
-          echo "Active branches:"
-          echo "$ACTIVE_BRANCHES"
+          for dir in *; do
+            [ -d "$dir" ] || continue
 
-          echo "Scanning deployed branch previews..."
-          for dir in "$PAGES_ROOT"/*; do
-            if [ -d "$dir" ]; then
-              branch_name=$(basename "$dir")
+            if echo "$WHITELIST" | grep -qw "$dir"; then
+              continue
+            fi
 
-              # Skip whitelisted folders
-              if echo "$WHITELIST" | grep -qw "$branch_name"; then
-                echo "Skipping main site folder: $branch_name"
-                continue
-              fi
-
-              # Check if the branch is active
-              if ! echo "$ACTIVE_BRANCHES" | grep -qw "$branch_name"; then
-                echo "Removing obsolete preview folder: $branch_name"
-                rm -rf "$dir"
-              else
-                echo "Keeping active branch folder: $branch_name"
-              fi
+            if ! echo "$ACTIVE_BRANCHES" | grep -qw "$dir"; then
+              echo "Removing obsolete preview: $dir"
+              rm -rf "$dir"
             fi
           done
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Cleanup obsolete branch previews" || echo "Nothing to clean"
+          git push
