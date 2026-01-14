@@ -15,7 +15,7 @@ with open(MKDOCS_FILE, "r") as f:
     config = yaml.safe_load(f)
 
 # -------------------------------
-# 0. Switch extra.css for branches
+# 1. Switch extra.css for branches
 # -------------------------------
 extra_css = config.get("extra_css", [])
 
@@ -24,16 +24,8 @@ if BRANCH != "main":
         "stylesheets/extra-branch.css" if css == "stylesheets/extra.css" else css
         for css in extra_css
     ]
-    
-config["extra_css"] = extra_css
 
-# -------------------------------
-# 1. site_dir logic
-# -------------------------------
-if BRANCH != "main":
-    config["site_dir"] = BRANCH
-else:
-    config.pop("site_dir", None)
+config["extra_css"] = extra_css
 
 # -------------------------------
 # 2. Build book menus
