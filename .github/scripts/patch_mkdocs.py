@@ -17,17 +17,15 @@ with open(MKDOCS_FILE, "r") as f:
 # -------------------------------
 # 0. Switch extra.css for branches
 # -------------------------------
-extra = config.get("extra", {})
-extra_css = extra.get("extra_css", [])
+extra_css = config.get("extra_css", [])
 
 if BRANCH != "main":
     extra_css = [
         "stylesheets/extra-branch.css" if css == "stylesheets/extra.css" else css
         for css in extra_css
     ]
-
-extra["extra_css"] = extra_css
-config["extra"] = extra
+    
+config["extra_css"] = extra_css
 
 # -------------------------------
 # 1. site_dir logic
