@@ -133,7 +133,8 @@ jobs:
           if [ "$BRANCH" != "main" ]; then
             echo "Generating DOCX"
             pandoc -s --number-sections --listings \
-              --metadata-file header.yml \
+              --metadata-file book-desc.yml \
+              --metadata-file pandoc-pdf.yml \
               --output="${REPO_NAME}.docx" combined.md
             cp "${REPO_NAME}.docx" "../../$CONTENTS" || true
           fi
@@ -141,7 +142,8 @@ jobs:
           echo "Generating PDF"
           pandoc -s --number-sections --listings \
             --template "/usr/share/pandoc/data/templates/custom.latex" \
-            --metadata-file header.yml \
+            --metadata-file book-desc.yml \
+            --metadata-file pandoc-pdf.yml \
             --output="${REPO_NAME}.pdf" combined.md
 
           cp "${REPO_NAME}.pdf" "../../$CONTENTS"
@@ -157,7 +159,8 @@ jobs:
 
               echo "Generating EPUB"
               pandoc -s \
-                --metadata-file=header-epub.yml \
+                --metadata-file book-desc.yml \
+                --metadata-file pandoc-epub.yml \
                 --epub-cover-image="$ICON_PNG" \
                 --output="${REPO_NAME}.epub" combined-epub.md
 
