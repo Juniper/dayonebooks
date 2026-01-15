@@ -1002,7 +1002,7 @@ $if(titlepage-background)$
   \setstretch{2}
   \vfill
   % adjust this value to move the block further down or up
-  \vskip 6em       % positive: pushes the block down
+  \vskip 20em       % positive: pushes the block down
   {\color{black}   % everything in this group is black
 
   \noindent {\huge \textbf{\textsf{$title$}}}
