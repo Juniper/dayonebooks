@@ -1002,7 +1002,7 @@ $if(titlepage-background)$
   \setstretch{2}
   \vfill
   % adjust this value to move the block further down or up
-  \vskip 2em       % positive: pushes the block down
+  \vskip 6em       % positive: pushes the block down
   {\color{black}   % everything in this group is black
 
   \noindent {\huge \textbf{\textsf{$title$}}}
@@ -1010,9 +1010,9 @@ $if(titlepage-background)$
   \vskip 1em
   {\Large \textsf{$subtitle$}}
   $endif$
-  \vskip 2em
+  \vskip 1em
   \noindent {\Large \textsf{$for(author)$$author$$sep$, $endfor$}}
-  \vskip 0.6em
+  \vskip 0.3em
   \noindent {\textsf{$date$}}
 
   } % end color group
