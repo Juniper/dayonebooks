@@ -27,6 +27,7 @@ if BRANCH != "main":
 
 config["extra_css"] = extra_css
 
+
 # -------------------------------
 # 2. Build book menus
 # -------------------------------
