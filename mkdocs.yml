@@ -46,7 +46,7 @@ plugins:
 - minify:
     minify_html: true
 site_author: HPE Juniper TME Team
-site_name: Day One books - A technical eBook collection by HPE Juniper Networking
+site_name: Day One Books - A technical eBook collection by HPE Juniper Networking
 theme:
   favicon: images/favicon.ico
   features:

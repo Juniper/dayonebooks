@@ -161,6 +161,11 @@
     background-color: #1d1f27 !important;
 }
 
+/* ✅ Invert black logo to white in light mode (dark header) */
+[data-md-color-scheme="default"] .md-header .md-logo img {
+    filter: invert(1);
+}
+
 /* ✅ Tabs bar (default theme) */
 [data-md-color-scheme="default"] .md-tabs {
     background-color: #21252f !important;
