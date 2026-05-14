@@ -4,7 +4,7 @@ import unicodedata
 
 class BookEnumeratePlugin(BasePlugin):
     """
-    Number headings per book, continuous across pages, skip /menu/, follow nav order.
+    Number headings per book, continuous across pages
     Keeps original anchors for references.
     """
 
@@ -16,7 +16,7 @@ class BookEnumeratePlugin(BasePlugin):
     def on_nav(self, nav, config, files):
         for page in nav.pages:
             src = page.file.src_path
-            if src.startswith("book/") and "/menu/" not in src:
+            if src.startswith("book/"):
                 print (f"Registering {src} for book enumeration...")
                 book = src.split("/")[1]
                 self.page_order_per_book.setdefault(book, []).append(src)
@@ -34,7 +34,7 @@ class BookEnumeratePlugin(BasePlugin):
     def on_page_markdown(self, markdown, page, config, files):
         src = page.file.src_path
 
-        if not src.startswith("book/") or "/menu/" in src:
+        if not src.startswith("book/"):
             return markdown
 
         print (f"Processing {src} for heading enumeration...")
@@ -44,6 +44,7 @@ class BookEnumeratePlugin(BasePlugin):
 
         self.current_counters = self.counters_per_book[book] = []
         page_index = self.page_order_per_book[book].index(src)
+        print(f"Processing page {src} for book {book} at index {page_index}")
 
         new_lines = []
         in_code_block = False
@@ -71,9 +72,11 @@ class BookEnumeratePlugin(BasePlugin):
             if anchor_match:
                 anchor = anchor_match.group(1)
                 title = title_with_anchor[:anchor_match.start()].strip()
+                print(f"Found existing anchor '{anchor}' for title '{title}'")
             else:
                 title = title_with_anchor
                 anchor = self.slugify(title)
+                print(f"No existing anchor found. Generated anchor '{anchor}' for title '{title}'")
 
             # Numbering logic
             if level == 1:
