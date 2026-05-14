@@ -9,18 +9,7 @@ class BookEnumeratePlugin(BasePlugin):
     """
 
     def __init__(self):
-        self.counters_per_book = {}
         self.current_counters = []
-        self.page_order_per_book = {}
-
-    def on_nav(self, nav, config, files):
-        for page in nav.pages:
-            src = page.file.src_path
-            if src.startswith("book/"):
-                print (f"Registering {src} for book enumeration...")
-                book = src.split("/")[1]
-                self.page_order_per_book.setdefault(book, []).append(src)
-        return nav
 
     def slugify(self, text):
         """
@@ -36,15 +25,13 @@ class BookEnumeratePlugin(BasePlugin):
 
         if not src.startswith("book/"):
             return markdown
-
-        print (f"Processing {src} for heading enumeration...")
+        
+        self.current_counters = []
         book = src.split("/")[1]
-        if book not in self.page_order_per_book:
-            return markdown
-
-        self.current_counters = self.counters_per_book[book] = []
-        page_index = self.page_order_per_book[book].index(src)
-        print(f"Processing page {src} for book {book} at index {page_index}")
+        m = re.search(r'(?i)^chapter([1-9][0-9]?)\.md$', book) 
+        page_index = int(m.group(1)) - 1
+        
+        print(f"Processing page {src} for chapter {book} at index {page_index}")
 
         new_lines = []
         in_code_block = False
