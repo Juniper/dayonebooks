@@ -17,6 +17,7 @@ class BookEnumeratePlugin(BasePlugin):
         for page in nav.pages:
             src = page.file.src_path
             if src.startswith("book/") and "/menu/" not in src:
+                print (f"Registering {src} for book enumeration...")
                 book = src.split("/")[1]
                 self.page_order_per_book.setdefault(book, []).append(src)
         return nav
@@ -36,6 +37,7 @@ class BookEnumeratePlugin(BasePlugin):
         if not src.startswith("book/") or "/menu/" in src:
             return markdown
 
+        print (f"Processing {src} for heading enumeration...")
         book = src.split("/")[1]
         if book not in self.page_order_per_book:
             return markdown
