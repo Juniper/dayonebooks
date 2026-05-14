@@ -126,7 +126,7 @@ jobs:
               done
           fi
 
-          echo "Combining markdown files: $md_files" > combined.md
+          echo "Combining markdown files: $md_files"
 
           for file in $md_files; do
               sed '/^---$/,/^---$/d' "$file" >> combined.md
