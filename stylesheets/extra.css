@@ -130,20 +130,20 @@
     font-weight: bold !important;
     text-align: center !important;
     font-family: 'HPE Graphik XXCondensed';
-    font-size: 64px;
+    font-size: clamp(28px, 5vw, 64px);
     text-transform: uppercase;
 }
 
 .md-typeset h2 {
     margin: 0.2em 0 .2em !important;
     font-weight: bold !important;
-    font-size: 34px;
+    font-size: clamp(22px, 3vw, 34px);
 }
 
 .md-typeset h3 {
     margin: 0.1em 0 .1em !important;
     font-weight: bold !important;
-    font-size: 24px;
+    font-size: clamp(18px, 2.5vw, 24px);
 }
 
 .md-typeset ul li {
@@ -190,6 +190,59 @@
 
 [data-md-color-scheme="slate"] .md-tabs__item--active > .md-tabs__link {
     color: white !important;
+}
+
+
+/* =========================================================
+   Mobile / Responsive
+   ========================================================= */
+
+/* Tablets and small screens */
+@media screen and (max-width: 960px) {
+    .md-content__inner {
+        margin-left: 1.5rem !important;
+        margin-right: 1.5rem !important;
+    }
+
+    .md-typeset h1 {
+        font-size: 36px;
+    }
+
+    .md-typeset h2 {
+        font-size: 26px;
+    }
+
+    .md-typeset h3 {
+        font-size: 20px;
+    }
+}
+
+/* Phones */
+@media screen and (max-width: 600px) {
+    .md-content__inner {
+        margin-left: 0.5rem !important;
+        margin-right: 0.5rem !important;
+    }
+
+    .md-typeset h1 {
+        font-size: 28px;
+    }
+
+    .md-typeset h2 {
+        font-size: 22px;
+    }
+
+    .md-typeset h3 {
+        font-size: 18px;
+    }
+
+    .md-typeset img {
+        max-width: 100% !important;
+    }
+
+    .md-typeset img[width] {
+        max-width: 100% !important;
+    }
 }
 
 
