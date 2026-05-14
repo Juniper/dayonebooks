@@ -102,12 +102,15 @@
    Layout & Grid
    ========================================================= */
 
-.md-sidebar {
-    width: 15rem;
-}
+/* Only apply fixed sidebar widths on desktop screens */
+@media screen and (min-width: 76.25em) {
+    .md-sidebar {
+        width: 15rem;
+    }
 
-.md-nav--primary .md-nav__list {
-    width: 14rem;
+    .md-nav--primary .md-nav__list {
+        width: 14rem;
+    }
 }
 
 .md-content__inner {
@@ -214,6 +217,15 @@
 
     .md-typeset h3 {
         font-size: 20px;
+    }
+
+    /* Let MkDocs Material handle sidebar as a hamburger drawer */
+    .md-sidebar {
+        width: auto;
+    }
+
+    .md-nav--primary .md-nav__list {
+        width: auto;
     }
 }
 
