@@ -1,4 +1,4 @@
-copyright: This site is maintained by HPE/Juniper Networking employees. Powered by
+copyright: This site is maintained by HPE Networking employees. Powered by
   Material for MkDocs & Pandoc
 docs_dir: docs
 extra:
@@ -45,8 +45,8 @@ plugins:
     separator: '[\s\-\_]'
 - minify:
     minify_html: true
-site_author: HPE Juniper TME Team
-site_name: Day One Books - A technical eBook collection by HPE Juniper Networking
+site_author: HPE Networking TME Team
+site_name: Day One Books - A technical eBook collection by HPE Networking
 theme:
   favicon: images/favicon.ico
   features:
