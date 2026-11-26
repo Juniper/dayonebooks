@@ -1,0 +1,8 @@
+---
+rights: "© Hewlett Packard Enterprise Development LP"
+css: "../../rendering/custom_epub.css"
+
+header-includes:
+  - \usepackage{etoolbox}
+  - \preto{\section}{\clearpage}
+---
