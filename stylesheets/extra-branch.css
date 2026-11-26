@@ -2,6 +2,6 @@
    so that a work-in-progress site is never mistaken for the published one. */
 @import url("extra.css");
 
+:root { --dob-header-height: calc(2.4rem + 4px); }
 .md-header { border-top: 4px solid #d36d00; }
-.md-tabs__item--active .md-tabs__link { border-bottom-color: #d36d00; }
 .md-footer { border-top-color: #d36d00; }
