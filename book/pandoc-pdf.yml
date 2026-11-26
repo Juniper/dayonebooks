@@ -1,0 +1,30 @@
+---
+fontsize: 10pt
+geometry: [top=2.6cm, bottom=2.6cm, left=2.2cm, right=2.2cm]
+titlepage: true
+titlepage-text-color: "FFFFFF"
+titlepage-rule-color: "FFFFFF"
+titlepage-rule-height: 0
+titlepage-background: "../../rendering/background.pdf"
+
+logo-width: 30mm
+
+# Running header: current chapter on the left, logo on the right
+header-left: "\\leftmark"
+header-right: "\\includegraphics[height=3.5mm]{../images/hpe-networking.png}"
+
+# Footer: book title on the left, page number on the right
+footer-left: "\\thetitle"
+footer-right: "\\pagemark"
+
+lof: true
+lot: true
+toc-own-page: true
+lof-own-page: true
+lot-own-page: true
+
+footnotes-pretty: true
+link-citations: true
+link-headers: true
+colorlinks: true
+---
