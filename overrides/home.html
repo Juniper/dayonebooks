@@ -1,0 +1,93 @@
+{% extends "main.html" %}
+{% set book = config.extra.book %}
+
+{% block tabs %}
+  {{ super() }}
+  <section class="dob-hero" data-md-color-scheme="slate">
+    <div class="dob-hero__inner md-grid">
+      <div class="dob-hero__text">
+        <p class="dob-eyebrow">Day One Book{% if book.subject %} &middot; {{ book.subject }}{% endif %}</p>
+        <h1 class="dob-hero__title">{{ book.title }}</h1>
+        {% if book.subtitle %}<p class="dob-hero__subtitle">{{ book.subtitle }}</p>{% endif %}
+        {% if book.authors %}
+          <p class="dob-hero__authors">
+            By {% for a in book.authors %}<strong>{{ a.name }}</strong>{% if not loop.last %}{% if loop.revindex == 2 %} and {% else %}, {% endif %}{% endif %}{% endfor %}
+          </p>
+        {% endif %}
+        <div class="dob-hero__actions">
+          <a class="dob-btn dob-btn--primary" href="{{ book.read_url | url }}">
+            {% include ".icons/material/book-open-page-variant-outline.svg" %} Read online
+          </a>
+          {% for d in book.downloads %}
+            <a class="dob-btn dob-btn--secondary" href="{{ d.url | url }}" download>
+              {% include ".icons/material/tray-arrow-down.svg" %} {{ d.label }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="dob-hero__cover">
+        <div class="dob-cover">
+          <img src="{{ book.cover | url }}" alt="Cover of {{ book.title }}" onerror="this.parentNode.classList.add('dob-cover--generated');this.remove()">
+          <div class="dob-cover__art" aria-hidden="true">
+            <img class="dob-cover__logo" src="{{ 'images/hpe-networking.png' | url }}" alt="">
+            <span class="dob-cover__series">Day One</span>
+            <span class="dob-cover__title">{{ book.title }}</span>
+            {% if book.subtitle %}<span class="dob-cover__subtitle">{{ book.subtitle }}</span>{% endif %}
+            <span class="dob-cover__authors">{% for a in book.authors %}{{ a.name }}{% if not loop.last %} &middot; {% endif %}{% endfor %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block content %}
+  <section class="dob-section dob-about">
+    <div class="dob-about__abstract">
+      <p class="dob-kicker">About this book</p>
+      {{ page.content }}
+      {% if book.keywords %}
+        <ul class="dob-tags">{% for k in book.keywords %}<li>{{ k }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+    {% if book.highlights %}
+      <aside class="dob-card dob-about__highlights">
+        <h2>What you will learn</h2>
+        <ul>{% for h in book.highlights %}<li>{{ h }}</li>{% endfor %}</ul>
+      </aside>
+    {% endif %}
+  </section>
+
+  {% if book.authors %}
+    <section class="dob-section">
+      <p class="dob-kicker">The {{ "author" if book.authors | length == 1 else "authors" }}</p>
+      <div class="dob-grid dob-grid--authors">
+        {% for a in book.authors %}
+          <article class="dob-card dob-author">
+            <span class="dob-author__avatar" aria-hidden="true">{{ a.initials }}</span>
+            <div>
+              <h3>{{ a.name }}</h3>
+              {% if a.role %}<p class="dob-author__role">{{ a.role }}</p>{% endif %}
+              {% if a.bio %}<p>{{ a.bio }}</p>{% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+
+
+  <section class="dob-section dob-catalog">
+    <div>
+      <h2>More Day One books</h2>
+      <p>Practical, field-tested guides written by HPE Networking engineers.</p>
+    </div>
+    <a class="dob-btn dob-btn--primary" href="{{ book.catalog_url }}">Browse the catalog &rarr;</a>
+  </section>
+
+  <section class="dob-legal">
+    <h2>Legal disclaimer</h2>
+    <p>HPE Networking may disclose information related to development and plans for future products, features or enhancements, known as a Plan of Record (&ldquo;POR&rdquo;). These details are based on current development efforts and plans, which are subject to change at HPE Networking&rsquo;s sole discretion, without notice. Except as may be set forth in definitive agreements, HPE Networking provides no assurances and assumes no responsibility to introduce products, features or enhancements described in this book. Purchasing decisions by third parties should not be based on this POR and no purchases are contingent upon HPE Networking delivering any feature or functionality depicted in this book.</p>
+  </section>
+{% endblock %}

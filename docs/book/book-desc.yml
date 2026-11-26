@@ -8,4 +8,30 @@ keywords: [ROUTING, SAMPLE, MX]
 lang: "en"
 number-sections: true
 toc: true
+
+# ---------------------------------------------------------------
+# Micro-portal landing page (ignored by Pandoc, used by
+# .github/scripts/patch_mkdocs.py to generate docs/index.md)
+# ---------------------------------------------------------------
+portal:
+  abstract: |
+    Filter-Based Forwarding (FBF), also known as Policy-Based Routing (PBR),
+    lets you steer traffic based on criteria other than the destination
+    address. This Day One book explains how FBF works on MX Series routers
+    (AFT) and walks you through common deployment scenarios, from the simple
+    single-filter approach to the more granular routing-instance design.
+
+    Every example is based on Junos OS release 24.2 and comes with the full
+    configuration and the operational commands to verify it.
+  highlights:
+    - How the ingress lookup is altered by a firewall filter
+    - Redirecting traffic to a next-hop or a routing instance
+    - Verification and troubleshooting commands
+  authors:
+    - name: John Doe
+      role: Principal Technical Marketing Engineer, HPE Networking
+      bio: John has spent 15 years designing service-provider networks and focuses on MX Series routing and traffic engineering.
+    - name: Joe Bloggs
+      role: Senior Consulting Engineer, HPE Networking
+      bio: Joe helps large enterprises and operators deploy Junos-based routing at scale.
 ---

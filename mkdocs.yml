@@ -1,13 +1,15 @@
-copyright: This site is maintained by HPE Networking employees. Powered by
-  Material for MkDocs & Pandoc
+copyright: '&copy; Hewlett Packard Enterprise Development LP. Maintained by HPE Networking
+  engineers. Built with Material for MkDocs &amp; Pandoc.'
 docs_dir: docs
 extra:
   generator: false
   social:
   - icon: fontawesome/brands/linkedin
-    link: https://www.linkedin.com/company/juniper-networks
+    link: https://www.linkedin.com/company/hewlett-packard-enterprise
+    name: HPE on LinkedIn
   - icon: fontawesome/brands/github
-    link: https://github.com/juniper
+    link: https://github.com/HewlettPackard
+    name: HPE on GitHub
 extra_css:
 - https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css
 - https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css
@@ -21,6 +23,9 @@ extra_javascript:
 - js/extra.js
 markdown_extensions:
 - attr_list
+- admonition
+- pymdownx.details
+- pymdownx.superfences
 - pymdownx.extra
 - markdown_katex
 - toc:
@@ -46,7 +51,7 @@ plugins:
 - minify:
     minify_html: true
 site_author: HPE Networking TME Team
-site_name: Day One Books - A technical eBook collection by HPE Networking
+site_name: Day One Books by HPE Networking
 theme:
   favicon: images/favicon.ico
   features:
@@ -63,20 +68,25 @@ theme:
   - content.action.edit
   - content.tooltips
   - content.footnote.tooltips
+  custom_dir: overrides
   font:
-    code: Nova
-    text: Google Sans
+    code: JetBrains Mono
+    text: Inter
   language: en
-  logo: images/hpen.png
+  logo: images/hpe-networking.png
   name: material
   palette:
   - media: '(prefers-color-scheme: light)'
     scheme: default
+    primary: custom
+    accent: custom
     toggle:
       icon: material/brightness-7
       name: Switch to dark mode
   - media: '(prefers-color-scheme: dark)'
     scheme: slate
+    primary: custom
+    accent: custom
     toggle:
       icon: material/brightness-auto
       name: Switch to light mode

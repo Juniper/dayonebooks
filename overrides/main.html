@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{%- block announce -%}
+  {%- if config.extra.preview_branch -%}
+    <div class="dob-preview">
+      <span class="dob-preview__tag">Preview</span>
+      Work-in-progress build of branch <code>{{ config.extra.preview_branch }}</code>. Content may change before publication.
+    </div>
+  {%- endif -%}
+{%- endblock -%}
