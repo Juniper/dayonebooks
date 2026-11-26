@@ -24,6 +24,15 @@ The look follows the [HPE design system colors](https://design-system.hpe.design
 styles are in [`docs/stylesheets/extra.css`](docs/stylesheets/extra.css) and the page layouts in
 [`overrides/`](overrides/). Branch builds add a "Preview" banner and an orange accent.
 
+### PDF cover
+
+The first page of the PDF uses the A4 background
+[`rendering/background.pdf`](rendering/background.pdf), set by `titlepage-background` in
+[`docs/book/pandoc-pdf.yml`](docs/book/pandoc-pdf.yml). Pandoc writes the `title`, `subtitle`,
+`author` and `date` of `book-desc.yml` on it in white Inter; their sizes and position are set in the
+title page block of [`templates/custom.latex`](templates/custom.latex). The CI also uses this page
+as the ePUB cover and as the cover shown on the landing page.
+
 ### Preview locally
 
 Run this from a scratch copy, because `patch_mkdocs.py` rewrites `mkdocs.yml` and creates `docs/index.md`:

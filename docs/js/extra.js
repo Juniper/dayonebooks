@@ -1,3 +1,12 @@
+// The header blends into the page at the top and turns solid once scrolled (see extra.css)
+if (!window.dobHeaderState) {
+    window.dobHeaderState = function() {
+        document.documentElement.classList.toggle("dob-top", window.scrollY < 4);
+    };
+    window.addEventListener("scroll", window.dobHeaderState, { passive: true });
+}
+window.dobHeaderState();
+
 document.addEventListener("DOMContentLoaded", function() {
     const lightboxLinks = [];
 

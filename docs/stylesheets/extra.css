@@ -100,42 +100,28 @@
 body { -webkit-font-smoothing: antialiased; }
 
 /* =========================================================
-   Header & tabs
+   Header (logo, color-scheme toggle, search)
+   Always dark, in both schemes, so that it continues the landing page hero.
    ========================================================= */
+:root { --dob-header-height: 2.4rem; }
 .md-header {
-  box-shadow: none;
-  border-bottom: 1px solid var(--hpe-border-weak);
+  --md-primary-fg-color: #1d1f27;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #b1b9be;
+  transition: background-color .2s, box-shadow .2s;
 }
-.md-header[data-md-state="shadow"], .md-header--shadow { box-shadow: var(--hpe-shadow); }
-.md-header__button.md-logo { padding: .3rem .4rem; }
-.md-header__button.md-logo img { height: 1.25rem; }
-[data-md-color-scheme="slate"] .md-header__button.md-logo img { filter: invert(1); }
-.md-header__title { font-weight: 600; font-size: .8rem; }
+.md-header--shadow { box-shadow: 0 2px 12px rgba(0, 0, 0, .35); }
+/* "dob-top" is set by js/extra.js while the page is scrolled to the top */
+.dob-top .md-header { box-shadow: none; }
+.dob-top body:has(.dob-hero) .md-header { background-color: transparent; }
+.md-header__button.md-logo { display: inline-block; padding: .3rem .4rem; }
+.md-header__button.md-logo img { height: 1.25rem; filter: invert(1); }
+.md-header__title { visibility: hidden; }
+@media screen and (max-width: 76.234375em) {
+  .md-header__button[for="__drawer"] { order: -1; }
+}
 
-.md-tabs {
-  background-color: var(--md-primary-fg-color);
-  color: var(--md-primary-bg-color);
-  border-bottom: 1px solid var(--hpe-border-weak);
-}
-.md-tabs__link {
-  font-size: .72rem;
-  font-weight: 500;
-  opacity: 1;
-  color: var(--hpe-text-weak);
-  margin-top: .6rem;
-  padding-bottom: .5rem;
-  border-bottom: 3px solid transparent;
-  transition: color 125ms, border-color 125ms;
-}
-.md-tabs__link:hover,
-.md-tabs__item--active .md-tabs__link {
-  color: var(--hpe-text-strong);
-}
-.md-tabs__item--active .md-tabs__link { border-bottom-color: var(--hpe-brand); }
-
-.md-search__form { border-radius: 999px; background-color: var(--hpe-bg-contrast); }
-[data-md-color-scheme="default"] .md-search__input::placeholder,
-[data-md-color-scheme="default"] .md-search__icon { color: var(--hpe-text-weak); }
+.md-search__form { border-radius: 999px; background-color: rgba(255, 255, 255, .1); }
 
 /* Branch preview banner (overrides/main.html) */
 .md-banner { background: #fff3dd; color: #292d3a; border-bottom: 1px solid #f3c27a; }
@@ -283,9 +269,11 @@ body { -webkit-font-smoothing: antialiased; }
 .dob-btn--secondary:hover { background: var(--hpe-bg-contrast); }
 .dob-btn:focus-visible { outline: 2px solid var(--hpe-text-strong); outline-offset: 2px; }
 
-/* Hero (always rendered with the dark tokens, see data-md-color-scheme) */
+/* Hero (always rendered with the dark tokens, see data-md-color-scheme).
+   It starts behind the header, which is transparent at the top of the page. */
 .dob-hero {
   position: relative; overflow: hidden; color: #e6e8e9;
+  margin-top: calc(-1 * var(--dob-header-height)); padding-top: var(--dob-header-height);
   background:
     radial-gradient(60rem 30rem at 85% 120%, rgba(1, 169, 130, .35), transparent 60%),
     radial-gradient(40rem 24rem at 100% -10%, rgba(119, 100, 252, .22), transparent 60%),

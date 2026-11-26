@@ -57,7 +57,6 @@ theme:
   features:
   - toc.follow
   - navigation.top
-  - navigation.tabs
   - navigation.instant
   - navigation.footer
   - navigation.indexes

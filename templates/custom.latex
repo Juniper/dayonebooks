@@ -997,26 +997,36 @@ $endif$
 \noindent
 
 $if(titlepage-background)$
-% The titlepage with a background image has other text spacing and text size
-{
-  \setstretch{2}
-  \vfill
-  % adjust this value to move the block further down or up
-  \vskip 25em       % positive: pushes the block down
-  {\color{black}   % everything in this group is black
-
-  \noindent {\huge \textbf{\textsf{$title$}}}
-  $if(subtitle)$
-  {\Large \textsf{$subtitle$}}
-  $endif$
-  \vskip 1em
-  \noindent {\Large \textbf{$for(author)$$author$$sep$, $endfor$}}
-  \vskip 0.3em
-  \noindent {\textbf{$date$}}
-
-  } % end color group
-  \vfill
-}
+% Title, subtitle, authors and date sit at a fixed place on the cover
+% (rendering/background.pdf), left-aligned under its "DAY ONE" label.
+% xshift = left edge of the text, yshift = top of the title, both from the page corner.
+\definecolor{titlepage-text}{HTML}{$if(titlepage-text-color)$$titlepage-text-color$$else$FFFFFF$endif$}
+\ifPDFTeX
+  % Inter is selected for the cover only, so the book keeps its own fonts
+  \newcommand{\titlepagefont}{\fontfamily{Inter-LF}\selectfont}
+  \newcommand{\titlepagebold}{\fontseries{sb}\selectfont}
+\else
+  \newcommand{\titlepagefont}{\sffamily}
+  \newcommand{\titlepagebold}{\bfseries}
+\fi
+\tikz[remember picture,overlay]
+  \node[anchor=north west, inner sep=0pt, text=titlepage-text]
+    at ([xshift=16.8mm, yshift=-178mm]current page.north west) {%
+    \parbox[t]{\dimexpr\paperwidth-33.6mm\relax}{%
+    \raggedright\hyphenpenalty=10000\titlepagefont\setstretch{1}%
+    {\fontsize{32}{38}\selectfont\titlepagebold $title$\par}
+$if(subtitle)$
+    \vspace{10pt}
+    {\fontsize{17}{23}\selectfont $subtitle$\par}
+$endif$
+    \vspace{30pt}
+    {\fontsize{13}{18}\selectfont\titlepagebold $for(author)$$author$$sep$, $endfor$\par}
+$if(date)$
+    \vspace{4pt}
+    {\fontsize{11}{15}\selectfont $date$\par}
+$endif$
+    }%
+  };
 $else$
 {
   \setstretch{1.4}
