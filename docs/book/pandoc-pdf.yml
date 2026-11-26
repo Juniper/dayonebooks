@@ -1,5 +1,6 @@
 ---
-geometry: margin=2cm
+fontsize: 10pt
+geometry: [top=2.6cm, bottom=2.6cm, left=2.2cm, right=2.2cm]
 titlepage: true
 titlepage-text-color: "FFFFFF"
 titlepage-rule-color: "FFFFFF"
@@ -8,13 +9,13 @@ titlepage-background: "../../rendering/background.pdf"
 
 logo-width: 30mm
 
-header-left: "\\thetitle"
-header-center: "\\leftmark"
-header-right: "\\theauthor"
+# Running header: current chapter on the left, logo on the right
+header-left: "\\leftmark"
+header-right: "\\includegraphics[height=3.5mm]{../images/hpe-networking.png}"
 
-footer-left: "\\leftmark"
-footer-center: "Page \\thepage"
-footer-right: "\\leftmark"
+# Footer: book title on the left, page number on the right
+footer-left: "\\thetitle"
+footer-right: "\\pagemark"
 
 lof: true
 lot: true

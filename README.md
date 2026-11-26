@@ -24,7 +24,7 @@ The look follows the [HPE design system colors](https://design-system.hpe.design
 styles are in [`docs/stylesheets/extra.css`](docs/stylesheets/extra.css) and the page layouts in
 [`overrides/`](overrides/). Branch builds add a "Preview" banner and an orange accent.
 
-### PDF cover
+### PDF book
 
 The first page of the PDF uses the A4 background
 [`rendering/background.pdf`](rendering/background.pdf), set by `titlepage-background` in
@@ -32,6 +32,11 @@ The first page of the PDF uses the A4 background
 `author` and `date` of `book-desc.yml` on it in white Inter; their sizes and position are set in the
 title page block of [`templates/custom.latex`](templates/custom.latex). The CI also uses this page
 as the ePUB cover and as the cover shown on the landing page.
+
+The inner pages use Inter and the same HPE colors as the portal. The font size, the margins, the
+running header (current chapter and logo) and the footer (book title and page number) are set in
+`pandoc-pdf.yml`; the styles of the headings, code blocks, tables, notes and captions are in
+`custom.latex`.
 
 ### Preview locally
 

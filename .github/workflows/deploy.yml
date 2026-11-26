@@ -129,7 +129,9 @@ jobs:
           echo "Combining markdown files: $md_files"
 
           for file in $md_files; do
-              sed '/^---$/,/^---$/d' "$file" >> combined.md
+              # Drop the YAML front matter, only when the chapter starts with one,
+              # so that a "---" horizontal rule in the text is kept.
+              awk 'NR==1 && /^---$/ {skip=1; next} skip && /^---$/ {skip=0; next} !skip' "$file" >> combined.md
               echo "" >> combined.md
               echo "\pagebreak" >> combined.md
           done

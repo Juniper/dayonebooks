@@ -302,10 +302,18 @@ $if(verbatim-in-note)$
 \usepackage{fancyvrb}
 $endif$
 \usepackage{xcolor}
-\definecolor{default-linkcolor}{HTML}{A50000}
-\definecolor{default-filecolor}{HTML}{A50000}
-\definecolor{default-citecolor}{HTML}{4077C0}
-\definecolor{default-urlcolor}{HTML}{4077C0}
+% HPE design system colors, the same tokens as the web portal (docs/stylesheets/extra.css)
+\definecolor{hpe-brand}{HTML}{01A982}
+\definecolor{hpe-text-strong}{HTML}{292D3A}
+\definecolor{hpe-text-weak}{HTML}{606A70}
+\definecolor{hpe-text-primary}{HTML}{006750}
+\definecolor{hpe-border}{HTML}{B1B9BE}
+\definecolor{hpe-border-weak}{HTML}{D4D8DB}
+\definecolor{hpe-bg-back}{HTML}{F7F7F7}
+\definecolor{default-linkcolor}{HTML}{006750}
+\definecolor{default-filecolor}{HTML}{006750}
+\definecolor{default-citecolor}{HTML}{006750}
+\definecolor{default-urlcolor}{HTML}{006750}
 $if(footnotes-pretty)$
 % load footmisc in order to customize footnotes (footmisc has to be loaded before hyperref, cf. https://tex.stackexchange.com/a/169124/144087)
 \usepackage[hang,flushmargin,bottom,multiple]{footmisc}
@@ -580,7 +588,12 @@ $if(links-as-notes)$
 \DeclareRobustCommand{\href}[2]{#2\footnote{\url{#1}}}
 $endif$
 $if(verbatim-in-note)$
+$if(listings)$
+% With listings, inline code in a footnote needs no special handling, and
+% \VerbatimFootnotes breaks the footnote back-links (footnotebackref).
+$else$
 \VerbatimFootnotes % allow verbatim text in footnotes
+$endif$
 $endif$
 \hypersetup{
 $if(title-meta)$
@@ -678,36 +691,35 @@ $endif$
 \usepackage{csquotes}
 
 %
-% captions
+% captions: small and centered, bold label, weak text
 %
-\definecolor{caption-color}{HTML}{777777}
 $if(beamer)$
 $else$
-\usepackage[font={stretch=1.2}, textfont={color=caption-color}, position=top, skip=4mm, labelfont=bf, singlelinecheck=false, justification=$if(caption-justification)$$caption-justification$$else$raggedright$endif$]{caption}
+\usepackage[font={small,stretch=1.2}, labelfont={bf,color=hpe-text-strong}, textfont={color=hpe-text-weak}, position=top, skip=4mm, singlelinecheck=false, justification=$if(caption-justification)$$caption-justification$$else$centering$endif$]{caption}
+\captionsetup[figure]{position=bottom, skip=3mm}
 \setcapindent{0em}
 $endif$
 
 %
-% blockquote
+% blockquote, used for notes: brand bar on a light background
 %
-\definecolor{blockquote-border}{RGB}{221,221,221}
-\definecolor{blockquote-text}{RGB}{119,119,119}
 \usepackage{mdframed}
-\newmdenv[rightline=false,bottomline=false,topline=false,linewidth=3pt,linecolor=blockquote-border,skipabove=\parskip]{customblockquote}
-\renewenvironment{quote}{\begin{customblockquote}\list{}{\rightmargin=0em\leftmargin=0em}%
-\item\relax\color{blockquote-text}\ignorespaces}{\unskip\unskip\endlist\end{customblockquote}}
+\newmdenv[rightline=false,bottomline=false,topline=false,linewidth=3pt,linecolor=hpe-brand,backgroundcolor=hpe-bg-back,innerleftmargin=10pt,innerrightmargin=10pt,innertopmargin=5pt,innerbottommargin=5pt,skipabove=\parskip,skipbelow=\parskip]{customblockquote}
+\renewenvironment{quote}{\begin{customblockquote}\list{}{\rightmargin=0em\leftmargin=0em\topsep=0pt\partopsep=0pt}%
+\item\relax\ignorespaces}{\unskip\unskip\endlist\end{customblockquote}}
 
 %
-% Source Sans Pro as the default font family
+% Inter as the default font family (as on the cover and the web portal),
+% with semibold for bold text and tabular figures.
 % Source Code Pro for monospace text
-%
-% 'default' option sets the default
-% font family to Source Sans Pro, not \sfdefault.
 %
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   $if(fontfamily)$
   $else$
-  \usepackage[default]{sourcesanspro}
+  % Inter is selected directly: its LaTeX package needs Greek fonts that the CI does not install
+  \renewcommand{\sfdefault}{Inter-TLF}
+  \renewcommand{\familydefault}{\sfdefault}
+  \DeclareFontSeriesDefault[sf]{bf}{sb}
   \usepackage{sourcecodepro}
   $endif$
 \else % if not pdftex
@@ -738,16 +750,40 @@ $endif$
 \fi
 
 %
-% heading color
+% text and headings
 %
-\definecolor{heading-color}{RGB}{40,40,40}
 $if(beamer)$
 $else$
-\addtokomafont{section}{\color{heading-color}}
+% dark slate instead of pure black for the text, as on the web portal
+\makeatletter
+\AtBeginDocument{\color{hpe-text-strong}\global\let\default@color\current@color}
+\makeatother
+\clubpenalty=10000
+\widowpenalty=10000
+
+% first-level headings have a brand-colored number and a rule that starts with a brand bar
+\setkomafont{section}{\fontsize{20}{25}\selectfont}
+\setkomafont{subsection}{\fontsize{14}{18}\selectfont}
+\setkomafont{subsubsection}{\fontsize{11.5}{15}\selectfont}
+\RedeclareSectionCommand[beforeskip=2\baselineskip, afterskip=1.2\baselineskip]{section}
+\RedeclareSectionCommand[beforeskip=1.6\baselineskip, afterskip=.5\baselineskip]{subsection}
+\RedeclareSectionCommand[beforeskip=1.2\baselineskip, afterskip=.3\baselineskip]{subsubsection}
+\RedeclareSectionCommand[runin=false, beforeskip=\baselineskip, afterskip=.2\baselineskip]{paragraph}
+\renewcommand*{\sectionformat}{\textcolor{hpe-brand}{\thesection}\autodot\enskip}
+\makeatletter
+\renewcommand{\sectionlinesformat}[4]{%
+  \Ifstr{#1}{section}{%
+    \parbox[t]{\linewidth}{\raggedsection\@hangfrom{\hskip #2#3}{#4}\par\nointerlineskip\vskip 9pt
+      \textcolor{hpe-brand}{\rule{12mm}{2pt}}\textcolor{hpe-border-weak}{\rule{\dimexpr\linewidth-12mm\relax}{.4pt}}}%
+  }{\@hangfrom{\hskip #2#3}{#4}}%
+}
+\makeatother
+
+% table of contents and lists of figures and tables
+\newcommand*{\tocbrandnumber}[1]{\textcolor{hpe-brand}{#1}}
+\DeclareTOCStyleEntry[entrynumberformat=\tocbrandnumber, beforeskip=1.2em plus 1pt]{tocline}{section}
+\DeclareTOCStyleEntries[linefill={\textcolor{hpe-border}{\TOCLineLeaderFill}\relax}]{tocline}{subsection,subsubsection,figure,table}
 $endif$
-% When using the classes report, scrreprt, book,
-% scrbook or memoir, uncomment the following line.
-%\addtokomafont{chapter}{\color{heading-color}}
 
 %
 % variables for title, author and date
@@ -765,13 +801,18 @@ $endif$
 %
 $if(tables)$
 
-\definecolor{table-row-color}{HTML}{F5F5F5}
-\definecolor{table-rule-color}{HTML}{999999}
+\definecolor{table-row-color}{HTML}{F7F7F7}
+\definecolor{table-rule-color}{HTML}{B1B9BE}
 
-%\arrayrulecolor{black!40}
-\arrayrulecolor{table-rule-color}     % color of \toprule, \midrule, \bottomrule
-\setlength\heavyrulewidth{0.3ex}      % thickness of \toprule, \bottomrule
+\arrayrulecolor{table-rule-color}     % color of \toprule, \bottomrule
+\setlength\heavyrulewidth{0.6pt}      % thickness of \toprule, \bottomrule
+\setlength\lightrulewidth{1pt}        % thickness of \midrule
 \renewcommand{\arraystretch}{1.3}     % spacing (padding)
+% the rule under the table header is brand-colored, as on the web portal
+\let\tablemidrule\midrule
+\renewcommand{\midrule}{\arrayrulecolor{hpe-brand}\tablemidrule\arrayrulecolor{table-rule-color}}
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\small}
 
 $if(table-use-row-colors)$
 % Unfortunately the colored cells extend beyond the edge of the
@@ -808,15 +849,15 @@ $if(listings)$
 % general listing colors
 %
 \definecolor{listing-background}{HTML}{F7F7F7}
-\definecolor{listing-rule}{HTML}{B3B2B3}
-\definecolor{listing-numbers}{HTML}{B3B2B3}
-\definecolor{listing-text-color}{HTML}{000000}
-\definecolor{listing-keyword}{HTML}{435489}
-\definecolor{listing-keyword-2}{HTML}{1284CA} % additional keywords
-\definecolor{listing-keyword-3}{HTML}{9137CB} % additional keywords
-\definecolor{listing-identifier}{HTML}{435489}
-\definecolor{listing-string}{HTML}{00999A}
-\definecolor{listing-comment}{HTML}{8E8E8E}
+\definecolor{listing-rule}{HTML}{D4D8DB}
+\definecolor{listing-numbers}{HTML}{B1B9BE}
+\definecolor{listing-text-color}{HTML}{292D3A}
+\definecolor{listing-keyword}{HTML}{006750}
+\definecolor{listing-keyword-2}{HTML}{0070F8} % additional keywords
+\definecolor{listing-keyword-3}{HTML}{7764FC} % additional keywords
+\definecolor{listing-identifier}{HTML}{292D3A}
+\definecolor{listing-string}{HTML}{9B6310}
+\definecolor{listing-comment}{HTML}{7D8A92}
 
 \lstdefinestyle{eisvogel_listing_style}{
   language         = ,
@@ -834,13 +875,14 @@ $endif$
   breakatwhitespace=false,
   columns=fullflexible,
   frame            = single,
-  framesep         = 0.19em,
+  framesep         = 0.3em,
+  framerule        = 0.4pt,
   rulecolor        = \color{listing-rule},
   frameround       = ffff,
   tabsize          = 4,
-  numberstyle      = \color{listing-numbers},
+  numberstyle      = \color{listing-numbers}\fontsize{6.5}{9}\selectfont,
   aboveskip        = 1.0em,
-  belowskip        = 0.1em,
+  belowskip        = 0.6em,
   abovecaptionskip = 0em,
   belowcaptionskip = 1.0em,
   keywordstyle     = {\color{listing-keyword}\bfseries},
@@ -869,6 +911,9 @@ $endif$
   {”}{{''}}1
 }
  \lstset{style=eisvogel_listing_style}
+
+% inline code keeps the size of the surrounding text
+\renewcommand{\passthrough}[1]{{\lstset{basicstyle=\color{listing-text-color}\ttfamily}#1}}
 
 %
 % Java (Java SE 12, 2019-06-22)
@@ -929,17 +974,21 @@ $if(beamer)$
 $else$
 $if(disable-header-and-footer)$
 $else$
-\usepackage[headsepline,footsepline]{scrlayer-scrpage}
+\usepackage[headsepline=.4pt,automark]{scrlayer-scrpage}
+\automark[section]{section}
+\setkomafont{headsepline}{\color{hpe-border-weak}}
+\setkomafont{pagenumber}{\bfseries\color{hpe-text-strong}}
 
 \newpairofpagestyles{eisvogel-header-footer}{
   \clearpairofpagestyles
-  \ihead*{$if(header-left)$$header-left$$else$$title$$endif$}
+  % the left parts wrap instead of running into the right parts when they are long
+  \ihead*{\parbox[b]{.8\linewidth}{\raggedright $if(header-left)$$header-left$$else$$title$$endif$}}
   \chead*{$if(header-center)$$header-center$$else$$endif$}
   \ohead*{$if(header-right)$$header-right$$else$$date$$endif$}
-  \ifoot*{$if(footer-left)$$footer-left$$else$$for(author)$$author$$sep$, $endfor$$endif$}
+  \ifoot*{\parbox[t]{.8\linewidth}{\raggedright $if(footer-left)$$footer-left$$else$$for(author)$$author$$sep$, $endfor$$endif$}}
   \cfoot*{$if(footer-center)$$footer-center$$else$$endif$}
   \ofoot*{$if(footer-right)$$footer-right$$else$\thepage$endif$}
-  \addtokomafont{pageheadfoot}{\upshape}
+  \setkomafont{pageheadfoot}{\upshape\footnotesize\color{hpe-text-weak}}
 }
 \pagestyle{eisvogel-header-footer}
 
@@ -1117,13 +1166,13 @@ $endif$
 $endif$
 $endif$
 $if(lof)$
-\listoffigures
+{\hypersetup{linkcolor=}\listoffigures}
 $endif$
 $if(lof-own-page)$
 \newpage
 $endif$
 $if(lot)$
-\listoftables
+{\hypersetup{linkcolor=}\listoftables}
 $endif$
 $if(lot-own-page)$
 \newpage
