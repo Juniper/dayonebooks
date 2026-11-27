@@ -382,7 +382,8 @@ body { -webkit-font-smoothing: antialiased; }
 .md-typeset .dob-catalog .dob-btn--primary { background: #05cc93; color: #292d3a !important; }
 .md-typeset .dob-catalog .dob-btn--primary:hover { background: #00e0af; }
 
-.dob-legal { margin: 3rem 0 1rem; padding-top: 1.2rem; border-top: 1px solid var(--hpe-border-weak); }
+/* The space under the disclaimer is padding: the theme resets the bottom margin of the last block */
+.dob-legal { margin: 3rem 0 0; padding: 1.2rem 0 2rem; border-top: 1px solid var(--hpe-border-weak); }
 .md-typeset .dob-legal h2 { font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--hpe-text-weak); margin: 0 0 .4rem; }
 .md-typeset .dob-legal p { font-size: .62rem; line-height: 1.6; color: var(--hpe-text-weak); margin: 0; }
 

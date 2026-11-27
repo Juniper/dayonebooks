@@ -33,6 +33,9 @@ The first page of the PDF uses the A4 background
 title page block of [`templates/custom.latex`](templates/custom.latex). The CI also uses this page
 as the ePUB cover and as the cover shown on the landing page.
 
+[`rendering/backcover.pdf`](rendering/backcover.pdf) is the matching A4 back cover, with the legal
+disclaimer of the landing page. The build does not add it to the PDF yet.
+
 The inner pages use Inter and the same HPE colors as the portal. The font size, the margins, the
 running header (current chapter and logo) and the footer (book title and page number) are set in
 `pandoc-pdf.yml`; the styles of the headings, code blocks, tables, notes and captions are in

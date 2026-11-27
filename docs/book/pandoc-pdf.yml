@@ -6,6 +6,7 @@ titlepage-text-color: "FFFFFF"
 titlepage-rule-color: "FFFFFF"
 titlepage-rule-height: 0
 titlepage-background: "../../rendering/background.pdf"
+backpage-background: "../../rendering/backcover.pdf"
 
 logo-width: 30mm
 
