@@ -678,6 +678,9 @@ $else$
 \usepackage[margin=2.5cm,includehead=true,includefoot=true,centering]{geometry}
 $endif$
 $endif$
+$if(backpage-background)$
+\usepackage{tikz}
+$endif$
 
 %
 % break urls
@@ -1223,4 +1226,16 @@ $for(include-after)$
 $include-after$
 
 $endfor$
+$if(beamer)$
+$else$
+$if(backpage-background)$
+%%
+%% back cover: a full-page background as the last page, without header and footer
+%%
+\clearpage
+\thispagestyle{empty}
+\tikz[remember picture,overlay] \node[inner sep=0pt] at (current page.center){\includegraphics[width=\paperwidth,height=\paperheight]{$backpage-background$}};
+\null
+$endif$
+$endif$
 \end{document}

@@ -34,7 +34,8 @@ title page block of [`templates/custom.latex`](templates/custom.latex). The CI a
 as the ePUB cover and as the cover shown on the landing page.
 
 [`rendering/backcover.pdf`](rendering/backcover.pdf) is the matching A4 back cover, with the legal
-disclaimer of the landing page. The build does not add it to the PDF yet.
+disclaimer of the landing page. It is added as the last page of the PDF when `backpage-background`
+is set in `pandoc-pdf.yml`; remove that line to build the book without it.
 
 The inner pages use Inter and the same HPE colors as the portal. The font size, the margins, the
 running header (current chapter and logo) and the footer (book title and page number) are set in
